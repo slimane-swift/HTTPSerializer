@@ -22,25 +22,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-final class BodyStream: Stream {
+
+public enum BodyStreamError: Error {
+    case receiveUnsupported
+}
+
+final class BodyStream : Stream {
     var closed = false
     let transport: Stream
-
+    
     init(_ transport: Stream) {
         self.transport = transport
     }
-
+    
     func close() {
         closed = true
     }
-
+    
     func receive(upTo byteCount: Int, timingOut deadline: Double = .never) throws -> Data {
-        enum Error: ErrorProtocol {
-            case receiveUnsupported
-        }
-        throw Error.receiveUnsupported
+        throw BodyStreamError.receiveUnsupported
     }
-
+    
     func send(_ data: Data, timingOut deadline: Double = .never) throws {
         if closed {
             throw StreamError.closedStream(data: data)
@@ -51,7 +53,7 @@ final class BodyStream: Stream {
         try transport.send(data)
         try transport.send(newLine)
     }
-
+    
     func flush(timingOut deadline: Double = .never) throws {
         try transport.flush()
     }

@@ -1,7 +1,7 @@
 #if os(Linux)
 
 import XCTest
-@testable import HTTPSerializerTestSuite
+@testable import HTTPSerializerTests
 
 XCTMain([
     testCase(HTTPSerializerTests.allTests)
